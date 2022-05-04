@@ -1,3 +1,5 @@
+data "azurerm_client_config" "current" {}
+
 locals {
   domain_name = var.use_prefix ? join("", [lower(var.domain_prefix), lower(var.domain_name), "-", lower(random_id.acs_unique_id.hex)]) : lower(var.domain_name)
   inside_vpc  = length(var.vpc_options["subnet_ids"]) > 0 ? true : false
@@ -23,7 +25,55 @@ resource "azurerm_search_service" "acs" {
 
 }
 
+
 resource "random_id" "acs_unique_id" {
   byte_length = 3
 }
 
+resource "azurerm_key_vault" "acs_key_vault" {
+  name                        = "nasuni-api-acs-key-vault"
+  location                    = azurerm_resource_group.acs_rg.location
+  resource_group_name         = azurerm_resource_group.acs_rg.name
+  enabled_for_disk_encryption = true
+  tenant_id                   = data.azurerm_client_config.current.tenant_id
+  soft_delete_retention_days  = 7
+  purge_protection_enabled    = false
+
+  sku_name = "standard"
+
+  access_policy {
+    tenant_id = data.azurerm_client_config.current.tenant_id
+    object_id = data.azurerm_client_config.current.object_id
+
+    key_permissions = [
+      "Get",
+    ]
+
+    secret_permissions = [
+      "Get",
+      "Set",
+      "List",
+      "Delete",
+      "Purge",
+      "Recover"
+    ]
+
+    storage_permissions = [
+      "Get",
+    ]
+  }
+
+  depends_on = [
+    azurerm_search_service.acs
+  ]
+}
+
+resource "azurerm_key_vault_secret" "acs-url" {
+  name         = "nmc-api-acs-url"
+  value        = "https://${var.acs_srv_name}.search.windows.net"
+  key_vault_id = azurerm_key_vault.acs_key_vault.id
+
+  depends_on = [
+    azurerm_key_vault.acs_key_vault
+  ]
+}
