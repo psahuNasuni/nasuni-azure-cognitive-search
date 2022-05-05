@@ -13,13 +13,13 @@ variable "domain_name" {
 variable "acs_rg_name" {
   description = "Resouce group name for Azure Cognitive Search"
   type        = string
-  default     = "nasuni-acs-resources"
+  default     = "nasuni-acs-resources-demo"
 }
 
 variable "acs_srv_name" {
   description = "Service name for Azure Cognitive Search"
   type        = string
-  default     = "nasuni-acs-service"
+  default     = "nasuni-acs-service-demo"
 }
 
 variable "acs_region" {
