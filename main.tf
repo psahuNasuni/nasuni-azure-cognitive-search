@@ -70,7 +70,7 @@ resource "azurerm_key_vault" "acs_key_vault" {
 
 resource "azurerm_key_vault_secret" "acs-url" {
   name         = "nmc-api-acs-url"
-  value        = "https://${var.acs_srv_name}.search.windows.net"
+  value        = "https://${var.acs_service_name}.search.windows.net"
   key_vault_id = azurerm_key_vault.acs_key_vault.id
 
   depends_on = [
