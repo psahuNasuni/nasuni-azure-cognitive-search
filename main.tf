@@ -11,7 +11,7 @@ resource "azurerm_resource_group" "acs_rg" {
 }
 
 resource "azurerm_search_service" "acs" {
-  name                = var.acs_srv_name
+  name                = var.acs_service_name
   resource_group_name = azurerm_resource_group.acs_rg.name
   location            = azurerm_resource_group.acs_rg.location
   sku                 = "standard"
