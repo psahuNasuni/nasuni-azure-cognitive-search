@@ -66,3 +66,9 @@ variable "vpc_options" {
     subnet_ids         = []
   }
 }
+
+variable "acs_key_vault" {
+  description = "Azure Key Vault name for Azure Cognitive Search"
+  type        = string
+  default     = "nasuniacssecretstore"
+}
