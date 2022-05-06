@@ -31,7 +31,7 @@ resource "random_id" "acs_unique_id" {
 }
 
 resource "azurerm_key_vault" "acs_key_vault" {
-  name                        = "nasuni-api-acs-key-vault"
+  name                        = "demoacskeyvault"
   location                    = azurerm_resource_group.acs_rg.location
   resource_group_name         = azurerm_resource_group.acs_rg.name
   enabled_for_disk_encryption = true
@@ -107,25 +107,25 @@ resource "azurerm_key_vault_secret" "destination-container-name" {
 }
 
 
-resource "null_resource" "acs_data" {
-  provisioner "local-exec" {
-    command = "sh acs_output.sh ${local.acs_endpoint} ${local.acs_api_key} ${local.datasourceConnectionString} ${local.destination_container_name} "
-  }
-  provisioner "local-exec" {
-    when    = destroy
-    command = "rm -rf *.txt"
-  }
-  depends_on = [
-    azurerm_search_service.acs
-  ]
-}
+# resource "null_resource" "acs_data" {
+#   provisioner "local-exec" {
+#     command = "sh acs_output.sh ${local.acs_endpoint} ${local.acs_api_key} ${local.datasourceConnectionString} ${local.destination_container_name} "
+#   }
+#   provisioner "local-exec" {
+#     when    = destroy
+#     command = "rm -rf *.txt"
+#   }
+#   depends_on = [
+#     azurerm_search_service.acs
+#   ]
+# }
 
-locals {
-    acs_endpoint="https://${azurerm_search_service.acs.name}.search.windows.net" 
-    acs_api_key="${azurerm_search_service.acs.primary_key}"
-    datasourceConnectionString="DefaultEndpointsProtocol=https;AccountName=destinationbktsa;AccountKey=ekOsyrbVEGCbOQFIM6CaM3Ne7zdnct33ZuvSvp1feo1xtpQ/IMq15WD9TGXIeVvvuS0DO1mRMYYB+ASt1lMVKw==;EndpointSuffix=core.windows.net"
-    destination_container_name="destinationbkt"
-    depends_on = [null_resource.acs_data]
-}
+# locals {
+#     acs_endpoint="https://${azurerm_search_service.acs.name}.search.windows.net" 
+#     acs_api_key="${azurerm_search_service.acs.primary_key}"
+#     datasourceConnectionString="DefaultEndpointsProtocol=https;AccountName=destinationbktsa;AccountKey=ekOsyrbVEGCbOQFIM6CaM3Ne7zdnct33ZuvSvp1feo1xtpQ/IMq15WD9TGXIeVvvuS0DO1mRMYYB+ASt1lMVKw==;EndpointSuffix=core.windows.net"
+#     destination_container_name="destinationbkt"
+#     depends_on = [null_resource.acs_data]
+# }
 
 
