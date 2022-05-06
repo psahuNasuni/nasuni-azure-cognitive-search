@@ -4,28 +4,28 @@
 ##  Organization  :   Nasuni Labs   
 #########################################################
 
-variable "domain_name" {
+variable "acs_domain_name" {
   description = "Domain name for Azure Cognitive Search"
   type        = string
-  default     = "acs-domain"
+  default     = "domain"
 }
 
-variable "acs_rg_name" {
+variable "acs_resource_group" {
   description = "Resouce group name for Azure Cognitive Search"
   type        = string
-  default     = "nasuni-acs-resources-demo"
+  default     = ""
 }
 
-variable "acs_srv_name" {
+variable "acs_service_name" {
   description = "Service name for Azure Cognitive Search"
   type        = string
-  default     = "nasuni-acs-service-demo"
+  default     = ""
 }
 
-variable "acs_region" {
+variable "azure_location" {
   description = "Region for Azure Cognitive Search"
   type        = string
-  default     = "eastus2"
+  default     = ""
 }
 
 variable "acs_version" {

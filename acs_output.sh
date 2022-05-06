@@ -5,7 +5,7 @@ DATASOURCECONNECTIONSTRING="$3"
 DESTINATION_CONTAINER_NAME="$4"
 create_acs_output_file() {
     ACS_OUTPUT_FILE_NAME="ACS_OUTPUT_FILE.txt"
-    echo "acs_endpoint="$ACS_ENDPOINT >> $ACS_OUTPUT_FILE_NAME
+    echo "acs_endpoint="$ACS_ENDPOINT >>$ACS_OUTPUT_FILE_NAME
     echo "acs_api_key="$ACS_API_KEY >>$ACS_OUTPUT_FILE_NAME
     echo "datasourceConnectionString="$DATASOURCECONNECTIONSTRING >>$ACS_OUTPUT_FILE_NAME
     echo "destination_container_name="$DESTINATION_CONTAINER_NAME >>$ACS_OUTPUT_FILE_NAME 
