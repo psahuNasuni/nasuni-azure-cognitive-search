@@ -28,6 +28,19 @@ variable "azure_location" {
   default     = ""
 }
 
+
+variable "datasource-connection-string" {
+  description = "Datasource Service Account Connection Stringe"
+  type        = string
+  default     = ""
+}
+
+variable "destination-container-name" {
+  description = "Destination Container name"
+  type        = string
+  default     = ""
+}
+
 variable "acs_version" {
   description = "Version of Azure Cognitive Search to deploy (default 7.10)"
   type        = string

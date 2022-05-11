@@ -87,9 +87,9 @@ resource "azurerm_key_vault_secret" "acs-api-key" {
     azurerm_key_vault.acs_key_vault
   ]
 }
-resource "azurerm_key_vault_secret" "datasource-Connection-String" {
-  name         = "datasource-Connection-String"
-  value        = "https;AccountName=destinationbktsa;AccountKey=ekOsyrbVEGCbOQFIM6CaM3Ne7zdnct33ZuvSvp1feo1xtpQ/IMq15WD9TGXIeVvvuS0DO1mRMYYB+ASt1lMVKw==;EndpointSuffix=core.windows.net"
+resource "azurerm_key_vault_secret" "datasource-connection-string" {
+  name         = "datasource-connection-string"
+  value        = var.datasource-connection-string
   key_vault_id = azurerm_key_vault.acs_key_vault.id
 
   depends_on = [
@@ -98,7 +98,7 @@ resource "azurerm_key_vault_secret" "datasource-Connection-String" {
 }
 resource "azurerm_key_vault_secret" "destination-container-name" {
   name         = "destination-container-name"
-  value        = "destinationbkt"
+  value        = var.destination-container-name
   key_vault_id = azurerm_key_vault.acs_key_vault.id
 
   depends_on = [
