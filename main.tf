@@ -48,7 +48,7 @@ resource "azurerm_key_vault" "acs_key_vault" {
 
 resource "azurerm_key_vault_access_policy" "policy" {
   key_vault_id       = azurerm_key_vault.acs_key_vault.id
-  object_id          = azurerm_search_service.acs.identity.0.principal_id
+  object_id          = azurerm_search_service.acs.identity.principal_id
   tenant_id          = data.azurerm_client_config.current.tenant_id
 
   key_permissions = [
