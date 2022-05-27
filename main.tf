@@ -43,7 +43,7 @@ resource "azurerm_key_vault" "acs_key_vault" {
 
   access_policy {
     tenant_id = data.azurerm_client_config.current.tenant_id
-    object_id = azurerm_search_service.acs.identity.0.principal_id
+    object_id = azurerm_search_service.acs.0.object_id
 
     key_permissions = [
       "Get",
