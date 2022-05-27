@@ -41,32 +41,39 @@ resource "azurerm_key_vault" "acs_key_vault" {
 
   sku_name = "standard"
 
-  access_policy {
-    tenant_id = data.azurerm_client_config.current.tenant_id
-    object_id = azurerm_search_service.acs.0.object_id
+  depends_on = [
+    azurerm_search_service.acs
+  ]
+}
 
-    key_permissions = [
+data "azurerm_key_vault_access_policy" "policy" {
+  key_vault_id       = azurerm_key_vault.acs_key_vault.id
+  object_id          = azurerm_search_service.acs.identity.0.principal_id
+  tenant_id          = data.azurerm_client_config.current.tenant_
+
+  key_permissions = [
       "Get",
-    ]
+  ]
 
-    secret_permissions = [
+  secret_permissions = [
       "Get",
       "Set",
       "List",
       "Delete",
       "Purge",
       "Recover"
-    ]
+  ]
 
-    storage_permissions = [
+  storage_permissions = [
       "Get",
-    ]
-  }
+  ]
 
   depends_on = [
-    azurerm_search_service.acs
+    azurerm_key_vault.acs_key_vault
   ]
 }
+
+
 
 resource "azurerm_key_vault_secret" "acs-url" {
   name         = "nmc-api-acs-url"
