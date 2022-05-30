@@ -5,6 +5,10 @@ locals {
   inside_vpc  = length(var.vpc_options["subnet_ids"]) > 0 ? true : false
 }
 
+data "azuread_user" "user"{
+user_principal_name = var.user_principal_name
+}
+
 resource "azurerm_resource_group" "acs_rg" {
   name     = var.acs_resource_group
   location = var.azure_location
@@ -25,7 +29,6 @@ resource "azurerm_search_service" "acs" {
 
 }
 
-
 resource "random_id" "acs_unique_id" {
   byte_length = 3
 }
@@ -43,7 +46,7 @@ resource "azurerm_key_vault" "acs_key_vault" {
 
   access_policy {
     tenant_id = data.azurerm_client_config.current.tenant_id
-    object_id = data.azurerm_client_config.current.object_id
+    object_id = data.azuread_user.user.object_id
 
     key_permissions = [
       "Get",

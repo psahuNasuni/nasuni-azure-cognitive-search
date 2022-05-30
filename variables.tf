@@ -28,7 +28,6 @@ variable "azure_location" {
   default     = ""
 }
 
-
 variable "datasource-connection-string" {
   description = "Datasource Service Account Connection Stringe"
   type        = string
@@ -84,4 +83,10 @@ variable "acs_key_vault" {
   description = "Azure Key Vault name for Azure Cognitive Search"
   type        = string
   default     = "nasuniacssecretstore"
+}
+
+variable "user_principal_name" {
+  description = "User Principal Name"
+  type        = string
+  default     = ""
 }
