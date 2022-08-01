@@ -90,3 +90,13 @@ variable "user_principal_name" {
   type        = string
   default     = ""
 }
+
+variable "subscription_id" {
+  description = "Subscription id of azure account"
+  default     = ""
+}
+
+variable "tenant_id" {
+  description = "Tenant id of azure account"
+  default     = ""
+}
