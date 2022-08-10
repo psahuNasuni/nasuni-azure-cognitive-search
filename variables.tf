@@ -7,7 +7,7 @@
 variable "acs_domain_name" {
   description = "Domain name for Azure Cognitive Search"
   type        = string
-  default     = "domain"
+  default     = "acs"
 }
 
 variable "acs_resource_group" {
