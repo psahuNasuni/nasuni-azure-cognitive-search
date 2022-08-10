@@ -35,7 +35,7 @@ resource "random_id" "acs_unique_id" {
 
 resource "azurerm_key_vault" "acs_admin_vault" {
   ### Purpose : to Store details of ACS service
-  name                        = "acs-admin-vault"
+  name                        = "nasuni-labs-acs-admin"
   location                    = azurerm_resource_group.acs_rg.location
   resource_group_name         = azurerm_resource_group.acs_rg.name
   enabled_for_disk_encryption = true
