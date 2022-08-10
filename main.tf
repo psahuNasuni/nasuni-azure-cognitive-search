@@ -35,7 +35,7 @@ resource "random_id" "acs_unique_id" {
 
 resource "azurerm_key_vault" "acs_admin_vault" {
   ### Purpose : to Store details of ACS service
-  name                        = "nasuni-labs-acs-admin"
+  name                        = "${var.acs_key_vault}"
   location                    = azurerm_resource_group.acs_rg.location
   resource_group_name         = azurerm_resource_group.acs_rg.name
   enabled_for_disk_encryption = true
@@ -132,14 +132,5 @@ resource "azurerm_key_vault_secret" "acs_resource_group_per" {
   ]
 }
 
-# resource "azurerm_key_vault_secret" "azurerm_resource_grp" {
-#   name         = "acs-resource-group"
-#   value        = azurerm_search_service.acs.resource_group_name
-#   key_vault_id = azurerm_key_vault.acs_admin_vault.id
-
-#   depends_on = [
-#     azurerm_key_vault.acs_admin_vault
-#   ]
-# }
 
 

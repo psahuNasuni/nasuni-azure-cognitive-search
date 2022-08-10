@@ -82,7 +82,7 @@ variable "vpc_options" {
 variable "acs_key_vault" {
   description = "Azure Key Vault name for Azure Cognitive Search"
   type        = string
-  default     = "nasuniacssecretstore"
+  default     = "nasuni-labs-acs-admin"
 }
 
 variable "user_principal_name" {
