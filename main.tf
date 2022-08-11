@@ -82,10 +82,10 @@ resource "azurerm_key_vault_secret" "acs-url" {
   count = "N" == var.acs_key_vault_YN ? 1 : 0
   name         = "nmc-api-acs-url"
   value        = "https://${azurerm_search_service.acs[0].name}.search.windows.net"
-  key_vault_id = azurerm_key_vault.acs_admin_vault[0].id
+  key_vault_id = azurerm_key_vault.acs_admin_vault.id
 
   depends_on = [
-    azurerm_key_vault.acs_admin_vault[0],azurerm_search_service.acs[0]
+    azurerm_key_vault.acs_admin_vault,azurerm_search_service.acs[0]
   ]
 }
 
@@ -93,29 +93,29 @@ resource "azurerm_key_vault_secret" "acs-api-key" {
   count = "N" == var.acs_key_vault_YN ? 1 : 0
   name         = "acs-api-key"
   value        = azurerm_search_service.acs[0].primary_key
-  key_vault_id = azurerm_key_vault.acs_admin_vault[0].id
+  key_vault_id = azurerm_key_vault.acs_admin_vault.id
 
   depends_on = [
-    azurerm_key_vault.acs_admin_vault[0]
+    azurerm_key_vault.acs_admin_vault
   ]
 }
 
 resource "azurerm_key_vault_secret" "datasource-connection-string" {
   name         = "datasource-connection-string"
   value        = var.datasource_connection_string
-  key_vault_id = azurerm_key_vault.acs_admin_vault[0].id
+  key_vault_id = azurerm_key_vault.acs_admin_vault.id
 
   depends_on = [
-    azurerm_key_vault.acs_admin_vault[0]
+    azurerm_key_vault.acs_admin_vault
   ]
 }
 resource "azurerm_key_vault_secret" "destination-container-name" {
   name         = "destination-container-name"
   value        = var.destination_container_name
-  key_vault_id = azurerm_key_vault.acs_admin_vault[0].id
+  key_vault_id = azurerm_key_vault.acs_admin_vault.id
 
   depends_on = [
-    azurerm_key_vault.acs_admin_vault[0]
+    azurerm_key_vault.acs_admin_vault
   ]
 }
 
@@ -123,20 +123,20 @@ resource "azurerm_key_vault_secret" "acs_service_name_per" {
   count = "N" == var.acs_key_vault_YN ? 1 : 0
   name         = "acs-service-name"
   value        = azurerm_search_service.acs[0].name
-  key_vault_id = azurerm_key_vault.acs_admin_vault[0].id
+  key_vault_id = azurerm_key_vault.acs_admin_vault.id
 
   depends_on = [
-    azurerm_key_vault.acs_admin_vault[0]
+    azurerm_key_vault.acs_admin_vault
   ]
 }
 resource "azurerm_key_vault_secret" "acs_resource_group_per" {
   count       = "N" == var.cognitive_search_YN ? 1 : 0
   name         = "acs-resource-group"
   value        = azurerm_search_service.acs[0].resource_group_name
-  key_vault_id = azurerm_key_vault.acs_admin_vault[0].id
+  key_vault_id = azurerm_key_vault.acs_admin_vault.id
 
   depends_on = [
-    azurerm_key_vault.acs_admin_vault[0]
+    azurerm_key_vault.acs_admin_vault
   ]
 }
 
