@@ -15,6 +15,8 @@ resource "azurerm_resource_group" "acs_rg" {
 }
 
 resource "azurerm_search_service" "acs" {
+  
+  count = "N" == var.cognitive_search_status ? 1 : 0
   name                = "${local.acs_domain_name}"
   resource_group_name = azurerm_resource_group.acs_rg.name
   location            = azurerm_resource_group.acs_rg.location
@@ -34,8 +36,9 @@ resource "random_id" "acs_unique_id" {
 }
 
 resource "azurerm_key_vault" "acs_admin_vault" {
+  count = "" == var.acs_key_vault ? 1 : 0
   ### Purpose : to Store details of ACS service
-  name                        = "${var.acs_key_vault}"
+  name                        = "nasuni-labs-acs-admin"
   location                    = azurerm_resource_group.acs_rg.location
   resource_group_name         = azurerm_resource_group.acs_rg.name
   enabled_for_disk_encryption = true
@@ -71,8 +74,12 @@ resource "azurerm_key_vault" "acs_admin_vault" {
     azurerm_search_service.acs
   ]
 }
-
+locals {
+  acs_url_value=""
+}
 resource "azurerm_key_vault_secret" "acs-url" {
+  ### If cognitive_search_status = N create a Version of entry in KeyVault
+  count        = "N" == var.cognitive_search_status ? 1 : 0
   name         = "nmc-api-acs-url"
   value        = "https://${azurerm_search_service.acs.name}.search.windows.net"
   key_vault_id = azurerm_key_vault.acs_admin_vault.id
@@ -83,6 +90,7 @@ resource "azurerm_key_vault_secret" "acs-url" {
 }
 
 resource "azurerm_key_vault_secret" "acs-api-key" {
+  count        = "N" == var.cognitive_search_status ? 1 : 0
   name         = "acs-api-key"
   value        = azurerm_search_service.acs.primary_key
   key_vault_id = azurerm_key_vault.acs_admin_vault.id
@@ -111,9 +119,8 @@ resource "azurerm_key_vault_secret" "destination-container-name" {
   ]
 }
 
-
-
 resource "azurerm_key_vault_secret" "acs_service_name_per" {
+  count        = "N" == var.cognitive_search_status ? 1 : 0
   name         = "acs-service-name"
   value        = azurerm_search_service.acs.name
   key_vault_id = azurerm_key_vault.acs_admin_vault.id
@@ -123,6 +130,7 @@ resource "azurerm_key_vault_secret" "acs_service_name_per" {
   ]
 }
 resource "azurerm_key_vault_secret" "acs_resource_group_per" {
+  count       = "N" == var.cognitive_search_status ? 1 : 0
   name         = "acs-resource-group"
   value        = azurerm_search_service.acs.resource_group_name
   key_vault_id = azurerm_key_vault.acs_admin_vault.id

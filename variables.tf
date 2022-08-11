@@ -82,7 +82,7 @@ variable "vpc_options" {
 variable "acs_key_vault" {
   description = "Azure Key Vault name for Azure Cognitive Search"
   type        = string
-  default     = "nasuni-labs-acs-admin"
+  default     = ""
 }
 
 variable "user_principal_name" {
@@ -98,5 +98,9 @@ variable "subscription_id" {
 
 variable "tenant_id" {
   description = "Tenant id of azure account"
+  default     = ""
+}
+variable "cognitive_search_status" {
+  description = "cognitive_search_status"
   default     = ""
 }
