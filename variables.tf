@@ -117,3 +117,7 @@ variable "acs_rg_YN" {
   description = "acs_rg_YN YN"
   default     = ""
 }
+variable "acs_key_vault_id" {
+  description = "acs key vault id"
+  default     = ""
+}
