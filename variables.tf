@@ -28,13 +28,13 @@ variable "azure_location" {
   default     = ""
 }
 
-variable "datasource-connection-string" {
+variable "datasource_connection_string" {
   description = "Datasource Service Account Connection Stringe"
   type        = string
   default     = ""
 }
 
-variable "destination-container-name" {
+variable "destination_container_name" {
   description = "Destination Container name"
   type        = string
   default     = ""
@@ -100,7 +100,11 @@ variable "tenant_id" {
   description = "Tenant id of azure account"
   default     = ""
 }
-variable "cognitive_search_status" {
+variable "cognitive_search_YN" {
   description = "cognitive_search_status"
+  default     = ""
+}
+variable "acs_key_vault_YN" {
+  description = "acs_key_vault YN"
   default     = ""
 }
