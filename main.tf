@@ -11,7 +11,7 @@ user_principal_name = var.user_principal_name
 
 resource "azurerm_resource_group" "acs_rg" {
   count = "N" == var.acs_rg_YN ? 1 : 0
-  name     = "nasuni-labs-acs-rg"
+  name     = "" == var.acs_rg_name ? "nasuni-labs-acs-rg" : var.acs_rg_name
   location = var.azure_location
 }
 
@@ -39,7 +39,7 @@ resource "random_id" "acs_unique_id" {
 resource "azurerm_key_vault" "acs_admin_vault" {
   count = "N" == var.acs_key_vault_YN ? 1 : 0
   ### Purpose : to Store details of ACS service
-  name                        = "nasuni-labs-acs-admin"
+  name                        = "" == var.acs_key_vault ? "nasuni-labs-acs-admin" : var.acs_key_vault
   location                    = azurerm_resource_group.acs_rg[0].location
   resource_group_name         = azurerm_resource_group.acs_rg[0].name
   enabled_for_disk_encryption = true
