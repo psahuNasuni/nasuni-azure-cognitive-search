@@ -41,7 +41,7 @@ resource "azurerm_key_vault" "acs_admin_vault" {
   ### Purpose : to Store details of ACS service
   name                        = "" == var.acs_key_vault ? "nasuni-labs-acs-admin" : var.acs_key_vault
   location                    = "" != var.azure_location ? var.azure_location : azurerm_resource_group.acs_rg[0].location
-  resource_group_name         = "" != var.acs_resource_group ? var.acs_resource_group : azurerm_resource_group.acs_rg[0].name
+  resource_group_name         = "" != var.acs_rg_name ? var.acs_rg_name : azurerm_resource_group.acs_rg[0].name
   enabled_for_disk_encryption = true
   tenant_id                   = data.azurerm_client_config.current.tenant_id
   soft_delete_retention_days  = 7
