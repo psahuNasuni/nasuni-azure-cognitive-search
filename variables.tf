@@ -7,7 +7,7 @@
 variable "acs_domain_name" {
   description = "Domain name for Azure Cognitive Search"
   type        = string
-  default     = "domain"
+  default     = "acs"
 }
 
 variable "acs_resource_group" {
@@ -28,13 +28,13 @@ variable "azure_location" {
   default     = ""
 }
 
-variable "datasource-connection-string" {
+variable "datasource_connection_string" {
   description = "Datasource Service Account Connection Stringe"
   type        = string
   default     = ""
 }
 
-variable "destination-container-name" {
+variable "destination_container_name" {
   description = "Destination Container name"
   type        = string
   default     = ""
@@ -82,7 +82,7 @@ variable "vpc_options" {
 variable "acs_key_vault" {
   description = "Azure Key Vault name for Azure Cognitive Search"
   type        = string
-  default     = "nasuniacssecretstore"
+  default     = ""
 }
 
 variable "user_principal_name" {
@@ -98,5 +98,26 @@ variable "subscription_id" {
 
 variable "tenant_id" {
   description = "Tenant id of azure account"
+  default     = ""
+}
+variable "cognitive_search_YN" {
+  description = "cognitive_search_status"
+  default     = ""
+}
+variable "acs_key_vault_YN" {
+  description = "acs_key_vault YN"
+  default     = ""
+}
+variable "acs_rg_name" {
+  description = "acs_rg_name"
+  default     = ""
+}
+
+variable "acs_rg_YN" {
+  description = "acs_rg_YN YN"
+  default     = ""
+}
+variable "acs_key_vault_id" {
+  description = "acs key vault id"
   default     = ""
 }
