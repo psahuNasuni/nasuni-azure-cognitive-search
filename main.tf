@@ -134,3 +134,30 @@ resource "azurerm_key_vault_secret" "destination-container-name" {
     azurerm_key_vault.acs_admin_vault
   ]
 }
+
+####################################
+
+resource "azurerm_app_configuration" "appconf" {
+  name                = "acsConf"
+  resource_group_name = azurerm_resource_group.acs_rg.name
+  location            = azurerm_resource_group.acs_rg.location
+}
+
+resource "azurerm_role_assignment" "appconf_dataowner" {
+  scope                = azurerm_app_configuration.appconf.id
+  role_definition_name = "App Configuration Data Owner"
+  principal_id         = data.azurerm_client_config.current.object_id
+  # principal_id         = "377c44a2-3bef-4386-927a-ec5e8847b5d4"
+}
+
+
+resource "azurerm_app_configuration_key" "test" {
+  configuration_store_id = azurerm_app_configuration.appconf.id
+  key                    = "uid"
+  label                  = "acs_uid"
+  value                  = "69"
+
+  depends_on = [
+    azurerm_role_assignment.appconf_dataowner
+  ]
+}
