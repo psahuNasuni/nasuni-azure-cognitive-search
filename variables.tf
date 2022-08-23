@@ -79,12 +79,6 @@ variable "vpc_options" {
   }
 }
 
-variable "acs_key_vault" {
-  description = "Azure Key Vault name for Azure Cognitive Search"
-  type        = string
-  default     = ""
-}
-
 variable "user_principal_name" {
   description = "User Principal Name"
   type        = string
@@ -104,20 +98,17 @@ variable "cognitive_search_YN" {
   description = "cognitive_search_status"
   default     = ""
 }
-variable "acs_key_vault_YN" {
-  description = "acs_key_vault YN"
-  default     = ""
-}
+
 variable "acs_rg_name" {
   description = "acs_rg_name"
   default     = ""
 }
 
 variable "acs_rg_YN" {
-  description = "acs_rg_YN YN"
+  description = "acs resource group available: Y/N"
   default     = ""
 }
-variable "acs_key_vault_id" {
-  description = "acs key vault id"
+variable "acs_admin_app_config" {
+  description = "acs admin app_config"
   default     = ""
 }
