@@ -108,7 +108,7 @@ variable "acs_rg_YN" {
   description = "acs resource group available: Y/N"
   default     = ""
 }
-variable "acs_admin_app_config" {
+variable "acs_admin_app_config_name" {
   description = "acs admin app_config"
   default     = ""
 }
