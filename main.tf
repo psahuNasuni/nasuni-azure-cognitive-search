@@ -1,4 +1,7 @@
+
+
 data "azurerm_client_config" "current" {}
+
 
 locals {
   acs_domain_name = var.use_prefix ? join("", [lower(var.domain_prefix), lower(var.acs_domain_name), "-", lower(random_id.acs_unique_id.hex)]) : lower(var.acs_domain_name)
@@ -50,7 +53,7 @@ resource "azurerm_app_configuration" "appconf" {
 resource "azurerm_role_assignment" "appconf_dataowner" {
   scope                = azurerm_app_configuration.appconf.id
   role_definition_name = "App Configuration Data Owner"
-  principal_id         = data.azurerm_client_config.current.object_id
+  principal_id         = data.azuread_user.user.object_id
   # principal_id       = "377c44a2-3bef-4386-927a-ec5e8847b5d4"
 }
 
