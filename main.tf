@@ -5,21 +5,21 @@ data "azurerm_client_config" "current" {}
 
 locals {
   acs_domain_name = var.use_prefix ? join("", [lower(var.domain_prefix), lower(var.acs_domain_name), "-", lower(random_id.acs_unique_id.hex)]) : lower(var.acs_domain_name)
-  inside_vpc  = length(var.vpc_options["subnet_ids"]) > 0 ? true : false
+  inside_vpc      = length(var.vpc_options["subnet_ids"]) > 0 ? true : false
 }
 
-data "azuread_user" "user"{
-user_principal_name = var.user_principal_name
+data "azuread_user" "user" {
+  user_principal_name = var.user_principal_name
 }
 
 resource "azurerm_resource_group" "acs_rg" {
-  count = "N" == var.acs_rg_YN ? 1 : 0
+  count    = "N" == var.acs_rg_YN ? 1 : 0
   name     = "" == var.acs_rg_name ? "nasuni-labs-acs-rg" : var.acs_rg_name
   location = var.azure_location
 }
 
 resource "azurerm_search_service" "acs" {
-  name                = "${local.acs_domain_name}"
+  name                = local.acs_domain_name
   resource_group_name = "N" == var.acs_rg_YN ? azurerm_resource_group.acs_rg[0].name : var.acs_rg_name
   location            = "N" == var.acs_rg_YN ? azurerm_resource_group.acs_rg[0].location : var.azure_location
   sku                 = "standard"
@@ -30,9 +30,9 @@ resource "azurerm_search_service" "acs" {
     },
     var.tags,
   )
-depends_on = [
-  azurerm_resource_group.acs_rg
-]
+  depends_on = [
+    azurerm_resource_group.acs_rg
+  ]
 }
 
 resource "random_id" "acs_unique_id" {
@@ -43,9 +43,7 @@ resource "random_id" "acs_unique_id" {
 ####################################
 
 resource "azurerm_app_configuration" "appconf" {
-  name                = var.acs_admin_app_config
-  # resource_group_name = azurerm_resource_group.acs_rg.name
-  # location            = azurerm_resource_group.acs_rg.location
+  name = var.acs_admin_app_config
   resource_group_name = "N" == var.acs_rg_YN ? azurerm_resource_group.acs_rg[0].name : var.acs_rg_name
   location            = "N" == var.acs_rg_YN ? azurerm_resource_group.acs_rg[0].location : var.azure_location
 }
@@ -54,7 +52,6 @@ resource "azurerm_role_assignment" "appconf_dataowner" {
   scope                = azurerm_app_configuration.appconf.id
   role_definition_name = "App Configuration Data Owner"
   principal_id         = data.azuread_user.user.object_id
-  # principal_id       = "377c44a2-3bef-4386-927a-ec5e8847b5d4"
 }
 
 
@@ -68,7 +65,6 @@ resource "azurerm_app_configuration_key" "destination_container_name" {
     azurerm_role_assignment.appconf_dataowner
   ]
 }
-
 
 resource "azurerm_app_configuration_key" "datasource_connection_string" {
   configuration_store_id = azurerm_app_configuration.appconf.id
