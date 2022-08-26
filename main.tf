@@ -39,11 +39,8 @@ resource "random_id" "acs_unique_id" {
   byte_length = 3
 }
 
-
-####################################
-
 resource "azurerm_app_configuration" "appconf" {
-  name = var.acs_admin_app_config
+  name                = var.acs_admin_app_config_name
   resource_group_name = "N" == var.acs_rg_YN ? azurerm_resource_group.acs_rg[0].name : var.acs_rg_name
   location            = "N" == var.acs_rg_YN ? azurerm_resource_group.acs_rg[0].location : var.azure_location
 }

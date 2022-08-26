@@ -98,7 +98,10 @@ variable "cognitive_search_YN" {
   description = "cognitive_search_status"
   default     = ""
 }
-
+variable "acs_app_config_YN" {
+  description = "acs app_config status"
+  default     = ""
+}
 variable "acs_rg_name" {
   description = "acs_rg_name"
   default     = ""
@@ -109,7 +112,7 @@ variable "acs_rg_YN" {
   default     = ""
 }
 
-variable "acs_admin_app_config" {
+variable "acs_admin_app_config_name" {
   description = "acs admin app_config"
   default     = ""
 }
