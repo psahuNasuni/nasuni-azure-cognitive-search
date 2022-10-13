@@ -116,3 +116,27 @@ variable "acs_admin_app_config_name" {
   description = "acs admin app_config"
   default     = ""
 }
+
+variable "user_resource_group_name" {
+  description = "Resouce group name for Azure Cognitive Search"
+  type        = string
+  default     = ""
+}
+
+variable "user_vnet_name" {
+  description = "Virtual Network Name for Azure Cognitive Search"
+  type        = string
+  default     = ""
+}
+
+variable "user_subnet_name" {
+  description = "Available subnet name in Virtual Network"
+  type        = string
+  default     = ""
+}
+
+variable "use_private_acs" {
+  description = "Use Private ACS"
+  type        = string
+  default     = "N"
+}
