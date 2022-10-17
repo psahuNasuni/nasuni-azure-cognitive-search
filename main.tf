@@ -50,7 +50,8 @@ resource "azurerm_search_service" "acs" {
     var.tags,
   )
   depends_on = [
-    azurerm_resource_group.acs_rg
+    azurerm_resource_group.acs_rg,
+    azurerm_private_dns_zone.acs_dns_zone
   ]
 }
 
@@ -76,6 +77,18 @@ resource "azurerm_private_endpoint" "acs_private_endpoint" {
   depends_on = [
     azurerm_private_dns_zone.acs_dns_zone,
     azurerm_search_service.acs
+  ]
+}
+
+resource "azurerm_private_dns_zone_virtual_network_link" "acs_private_link" {
+  count                 = var.use_private_acs == "Y" ? 1 : 0
+  name                  = "${azurerm_search_service.acs.name}_link"
+  resource_group_name   = data.azurerm_virtual_network.VnetToBeUsed[0].resource_group_name
+  private_dns_zone_name = azurerm_private_dns_zone.acs_dns_zone[0].name
+  virtual_network_id    = data.azurerm_virtual_network.VnetToBeUsed[0].id
+
+  depends_on = [
+    azurerm_private_dns_zone.acs_dns_zone
   ]
 }
 
