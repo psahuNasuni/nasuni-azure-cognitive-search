@@ -12,6 +12,25 @@ data "azuread_user" "user" {
   user_principal_name = var.user_principal_name
 }
 
+data "azurerm_virtual_network" "VnetToBeUsed" {
+  count               = var.use_private_acs == "Y" ? 1 : 0
+  name                = var.user_vnet_name
+  resource_group_name = var.user_resource_group_name
+}
+
+data "azurerm_subnet" "azure_subnet_name" {
+  count                = var.use_private_acs == "Y" ? 1 : 0
+  name                 = var.user_subnet_name
+  virtual_network_name = data.azurerm_virtual_network.VnetToBeUsed[0].name
+  resource_group_name  = data.azurerm_virtual_network.VnetToBeUsed[0].resource_group_name
+}
+
+resource "azurerm_private_dns_zone" "acs_dns_zone" {
+  count               = var.use_private_acs == "Y" ? 1 : 0
+  name                = "privatelink.search.windows.net"
+  resource_group_name = data.azurerm_virtual_network.VnetToBeUsed[0].resource_group_name
+}
+
 resource "azurerm_resource_group" "acs_rg" {
   count    = "N" == var.acs_rg_YN ? 1 : 0
   name     = "" == var.acs_rg_name ? "nasuni-labs-acs-rg" : var.acs_rg_name
@@ -19,11 +38,11 @@ resource "azurerm_resource_group" "acs_rg" {
 }
 
 resource "azurerm_search_service" "acs" {
-  name                = local.acs_domain_name
-  resource_group_name = "N" == var.acs_rg_YN ? azurerm_resource_group.acs_rg[0].name : var.acs_rg_name
-  location            = "N" == var.acs_rg_YN ? azurerm_resource_group.acs_rg[0].location : var.azure_location
-  sku                 = "standard"
-
+  name                          = local.acs_domain_name
+  resource_group_name           = "N" == var.acs_rg_YN ? azurerm_resource_group.acs_rg[0].name : var.acs_rg_name
+  location                      = "N" == var.acs_rg_YN ? azurerm_resource_group.acs_rg[0].location : var.azure_location
+  sku                           = "standard"
+  public_network_access_enabled = var.use_private_acs == "Y" ? false : true
   tags = merge(
     {
       "Domain" = lower(local.acs_domain_name)
@@ -31,7 +50,45 @@ resource "azurerm_search_service" "acs" {
     var.tags,
   )
   depends_on = [
-    azurerm_resource_group.acs_rg
+    azurerm_resource_group.acs_rg,
+    azurerm_private_dns_zone.acs_dns_zone
+  ]
+}
+
+resource "azurerm_private_endpoint" "acs_private_endpoint" {
+  count               = var.use_private_acs == "Y" ? 1 : 0
+  name                = "${azurerm_search_service.acs.name}_private_endpoint"
+  location            = data.azurerm_virtual_network.VnetToBeUsed[0].location
+  resource_group_name = data.azurerm_virtual_network.VnetToBeUsed[0].resource_group_name
+  subnet_id           = data.azurerm_subnet.azure_subnet_name[0].id
+
+  private_dns_zone_group {
+    name                 = "default"
+    private_dns_zone_ids = [azurerm_private_dns_zone.acs_dns_zone[0].id]
+  }
+
+  private_service_connection {
+    name                           = "${azurerm_search_service.acs.name}_connection"
+    is_manual_connection           = false
+    private_connection_resource_id = azurerm_search_service.acs.id
+    subresource_names              = ["searchService"]
+  }
+
+  depends_on = [
+    azurerm_private_dns_zone.acs_dns_zone,
+    azurerm_search_service.acs
+  ]
+}
+
+resource "azurerm_private_dns_zone_virtual_network_link" "acs_private_link" {
+  count                 = var.use_private_acs == "Y" ? 1 : 0
+  name                  = "${azurerm_search_service.acs.name}_link"
+  resource_group_name   = data.azurerm_virtual_network.VnetToBeUsed[0].resource_group_name
+  private_dns_zone_name = azurerm_private_dns_zone.acs_dns_zone[0].name
+  virtual_network_id    = data.azurerm_virtual_network.VnetToBeUsed[0].id
+
+  depends_on = [
+    azurerm_private_dns_zone.acs_dns_zone
   ]
 }
 
@@ -43,7 +100,7 @@ resource "azurerm_app_configuration" "appconf" {
   name                = var.acs_admin_app_config_name
   resource_group_name = "N" == var.acs_rg_YN ? azurerm_resource_group.acs_rg[0].name : var.acs_rg_name
   location            = "N" == var.acs_rg_YN ? azurerm_resource_group.acs_rg[0].location : var.azure_location
-  sku = "standard"
+  sku                 = "standard"
   depends_on = [
     azurerm_search_service.acs
   ]
