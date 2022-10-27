@@ -85,15 +85,6 @@ variable "user_principal_name" {
   default     = ""
 }
 
-variable "subscription_id" {
-  description = "Subscription id of azure account"
-  default     = ""
-}
-
-variable "tenant_id" {
-  description = "Tenant id of azure account"
-  default     = ""
-}
 variable "cognitive_search_YN" {
   description = "cognitive_search_status"
   default     = ""
