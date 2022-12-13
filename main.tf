@@ -40,7 +40,7 @@ resource "azurerm_search_service" "acs" {
   name                          = local.acs_domain_name
   resource_group_name           = "N" == var.acs_rg_YN ? azurerm_resource_group.acs_rg[0].name : var.acs_rg_name
   location                      = "N" == var.acs_rg_YN ? azurerm_resource_group.acs_rg[0].location : var.azure_location
-  sku                           = "standard"
+  sku                           = "standard2"
   public_network_access_enabled = var.use_private_acs == "Y" ? false : true
   tags = merge(
     {
