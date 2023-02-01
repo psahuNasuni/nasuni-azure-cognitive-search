@@ -30,7 +30,7 @@ resource "azurerm_resource_group" "acs_rg" {
 
 ############ INFO ::: Provisioning of Azure Cognitive Search :: Started ###############
 
-resource "azurerm_private_dns_zone" "acs_dns_zone" {
+data "azurerm_private_dns_zone" "acs_dns_zone" {
   count               = var.use_private_acs == "Y" ? 1 : 0
   name                = "privatelink.search.windows.net"
   resource_group_name = data.azurerm_virtual_network.VnetToBeUsed[0].resource_group_name
@@ -50,7 +50,7 @@ resource "azurerm_search_service" "acs" {
   )
   depends_on = [
     azurerm_resource_group.acs_rg,
-    azurerm_private_dns_zone.acs_dns_zone
+    data.azurerm_private_dns_zone.acs_dns_zone
   ]
 }
 
@@ -63,7 +63,7 @@ resource "azurerm_private_endpoint" "acs_private_endpoint" {
 
   private_dns_zone_group {
     name                 = "default"
-    private_dns_zone_ids = [azurerm_private_dns_zone.acs_dns_zone[0].id]
+    private_dns_zone_ids = [data.azurerm_private_dns_zone.acs_dns_zone[0].id]
   }
 
   private_service_connection {
@@ -74,20 +74,8 @@ resource "azurerm_private_endpoint" "acs_private_endpoint" {
   }
 
   depends_on = [
-    azurerm_private_dns_zone.acs_dns_zone,
+    data.azurerm_private_dns_zone.acs_dns_zone,
     azurerm_search_service.acs
-  ]
-}
-
-resource "azurerm_private_dns_zone_virtual_network_link" "acs_private_link" {
-  count                 = var.use_private_acs == "Y" ? 1 : 0
-  name                  = "${azurerm_search_service.acs.name}_link"
-  resource_group_name   = data.azurerm_virtual_network.VnetToBeUsed[0].resource_group_name
-  private_dns_zone_name = azurerm_private_dns_zone.acs_dns_zone[0].name
-  virtual_network_id    = data.azurerm_virtual_network.VnetToBeUsed[0].id
-
-  depends_on = [
-    azurerm_private_dns_zone.acs_dns_zone
   ]
 }
 
@@ -99,14 +87,10 @@ resource "random_id" "acs_unique_id" {
 
 ############ INFO ::: Provisioning of Azure App Configuration :: Started ###############
 
-resource "azurerm_private_dns_zone" "appconf_dns_zone" {
+data "azurerm_private_dns_zone" "appconf_dns_zone" {
   count               = var.use_private_acs == "Y" ? 1 : 0
   name                = "privatelink.azconfig.io"
   resource_group_name = data.azurerm_virtual_network.VnetToBeUsed[0].resource_group_name
-
-  depends_on = [
-    azurerm_private_dns_zone_virtual_network_link.acs_private_link
-  ]
 }
 
 resource "azurerm_app_configuration" "appconf" {
@@ -118,7 +102,7 @@ resource "azurerm_app_configuration" "appconf" {
 
   depends_on = [
     azurerm_search_service.acs,
-    azurerm_private_dns_zone.appconf_dns_zone
+    data.azurerm_private_dns_zone.appconf_dns_zone
   ]
 }
 
@@ -138,7 +122,7 @@ resource "azurerm_private_endpoint" "appconf_private_endpoint" {
 
   private_dns_zone_group {
     name                 = "default"
-    private_dns_zone_ids = [azurerm_private_dns_zone.appconf_dns_zone[0].id]
+    private_dns_zone_ids = [data.azurerm_private_dns_zone.appconf_dns_zone[0].id]
   }
 
   private_service_connection {
@@ -149,21 +133,9 @@ resource "azurerm_private_endpoint" "appconf_private_endpoint" {
   }
 
   depends_on = [
-    azurerm_private_dns_zone.appconf_dns_zone,
+    data.azurerm_private_dns_zone.appconf_dns_zone,
     azurerm_app_configuration.appconf,
     null_resource.disable_public_access
-  ]
-}
-
-resource "azurerm_private_dns_zone_virtual_network_link" "appconf_private_link" {
-  count                 = var.use_private_acs == "Y" ? 1 : 0
-  name                  = "${azurerm_app_configuration.appconf.name}_link"
-  resource_group_name   = data.azurerm_virtual_network.VnetToBeUsed[0].resource_group_name
-  private_dns_zone_name = azurerm_private_dns_zone.appconf_dns_zone[0].name
-  virtual_network_id    = data.azurerm_virtual_network.VnetToBeUsed[0].id
-
-  depends_on = [
-    azurerm_private_dns_zone.appconf_dns_zone
   ]
 }
 
