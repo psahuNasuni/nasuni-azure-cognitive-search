@@ -5,8 +5,8 @@ locals {
   inside_vpc      = length(var.vpc_options["subnet_ids"]) > 0 ? true : false
 }
 
-data "azuread_user" "user" {
-  user_principal_name = var.user_principal_name
+data "azuread_service_principal" "user" {
+  application_id  = var.user_principal_name
 }
 
 data "azurerm_virtual_network" "VnetToBeUsed" {
@@ -142,7 +142,7 @@ resource "azurerm_private_endpoint" "appconf_private_endpoint" {
 resource "azurerm_role_assignment" "appconf_dataowner" {
   scope                = azurerm_app_configuration.appconf.id
   role_definition_name = "App Configuration Data Owner"
-  principal_id         = data.azuread_user.user.object_id
+  principal_id         = data.azuread_service_principal.user.object_id
 }
 
 ############ INFO ::: Provisioning of Azure App Configuration :: Completed ###############
