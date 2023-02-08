@@ -6,7 +6,7 @@ locals {
 }
 
 data "azuread_service_principal" "user" {
-  application_id  = var.user_principal_name
+  application_id  = var.sp_application_id
 }
 
 data "azurerm_virtual_network" "VnetToBeUsed" {
