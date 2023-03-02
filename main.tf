@@ -6,7 +6,7 @@ locals {
 }
 
 data "azuread_service_principal" "user" {
-  application_id  = var.sp_application_id
+  application_id = var.sp_application_id
 }
 
 data "azurerm_virtual_network" "VnetToBeUsed" {
@@ -73,7 +73,12 @@ resource "azurerm_private_endpoint" "acs_private_endpoint" {
     subresource_names              = ["searchService"]
   }
 
+  provisioner "local-exec" {
+    command = "az resource wait --updated --ids ${self.subnet_id}"
+  }
+
   depends_on = [
+    data.azurerm_subnet.azure_subnet_name,
     data.azurerm_private_dns_zone.acs_dns_zone,
     azurerm_search_service.acs
   ]
@@ -132,9 +137,13 @@ resource "azurerm_private_endpoint" "appconf_private_endpoint" {
     subresource_names              = ["configurationStores"]
   }
 
+  provisioner "local-exec" {
+    command = "az resource wait --updated --ids ${self.subnet_id}"
+  }
+
   depends_on = [
+    data.azurerm_subnet.azure_subnet_name,
     data.azurerm_private_dns_zone.appconf_dns_zone,
-    azurerm_app_configuration.appconf,
     null_resource.disable_public_access
   ]
 }
@@ -143,6 +152,10 @@ resource "azurerm_role_assignment" "appconf_dataowner" {
   scope                = azurerm_app_configuration.appconf.id
   role_definition_name = "App Configuration Data Owner"
   principal_id         = data.azuread_service_principal.user.object_id
+
+  depends_on = [
+    azurerm_private_endpoint.appconf_private_endpoint
+  ]
 }
 
 ############ INFO ::: Provisioning of Azure App Configuration :: Completed ###############
@@ -165,7 +178,7 @@ resource "azurerm_app_configuration_key" "datasource_connection_string" {
   value                  = var.datasource_connection_string
 
   depends_on = [
-    azurerm_role_assignment.appconf_dataowner
+    azurerm_app_configuration_key.destination_container_name
   ]
 }
 
@@ -176,7 +189,7 @@ resource "azurerm_app_configuration_key" "acs_resource_group" {
   value                  = azurerm_search_service.acs.resource_group_name
 
   depends_on = [
-    azurerm_role_assignment.appconf_dataowner
+    azurerm_app_configuration_key.datasource_connection_string
   ]
 }
 
@@ -187,7 +200,7 @@ resource "azurerm_app_configuration_key" "acs_service_name" {
   value                  = azurerm_search_service.acs.name
 
   depends_on = [
-    azurerm_role_assignment.appconf_dataowner
+    azurerm_app_configuration_key.acs_resource_group
   ]
 }
 
@@ -198,7 +211,7 @@ resource "azurerm_app_configuration_key" "acs_api_key" {
   value                  = azurerm_search_service.acs.primary_key
 
   depends_on = [
-    azurerm_role_assignment.appconf_dataowner
+    azurerm_app_configuration_key.acs_service_name
   ]
 }
 
@@ -209,7 +222,7 @@ resource "azurerm_app_configuration_key" "nmc_api_acs_url" {
   value                  = "https://${azurerm_search_service.acs.name}.search.windows.net"
 
   depends_on = [
-    azurerm_role_assignment.appconf_dataowner
+    azurerm_app_configuration_key.acs_api_key
   ]
 }
 
