@@ -79,8 +79,8 @@ variable "vpc_options" {
   }
 }
 
-variable "user_principal_name" {
-  description = "User Principal Name"
+variable "sp_application_id" {
+  description = "User Principal Application ID"
   type        = string
   default     = ""
 }
