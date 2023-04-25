@@ -114,7 +114,7 @@ resource "azurerm_app_configuration" "appconf" {
 
 resource "null_resource" "disable_public_access" {
   provisioner "local-exec" {
-    command = var.use_private_acs == "Y" ? "az appconfig update --name ${azurerm_app_configuration.appconf.name} --enable-public-network false --resource-group ${azurerm_app_configuration.appconf.resource_group_name}" : ""
+    command = var.use_private_acs == "Y" ? "az appconfig update --name ${azurerm_app_configuration.appconf.name} --enable-public-network false --resource-group ${azurerm_app_configuration.appconf.resource_group_name}" : "echo 'App configuration is Public"
   }
   depends_on = [azurerm_app_configuration.appconf]
 }
