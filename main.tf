@@ -13,7 +13,7 @@ data "azuread_service_principal" "user" {
 data "azurerm_virtual_network" "VnetToBeUsed" {
   count               = var.use_private_acs == "Y" ? 1 : 0
   name                = var.user_vnet_name
-  resource_group_name = var.user_resource_group_name
+  resource_group_name = var.networking_resource_group
 }
 
 data "azurerm_subnet" "azure_subnet_name" {
@@ -114,7 +114,7 @@ resource "azurerm_app_configuration" "appconf" {
 
 resource "null_resource" "disable_public_access" {
   provisioner "local-exec" {
-    command = var.use_private_acs == "Y" ? "az appconfig update --name ${azurerm_app_configuration.appconf.name} --enable-public-network false --resource-group ${azurerm_app_configuration.appconf.resource_group_name}" : ""
+    command = var.use_private_acs == "Y" ? "az appconfig update --name ${azurerm_app_configuration.appconf.name} --enable-public-network false --resource-group ${azurerm_app_configuration.appconf.resource_group_name}" : "echo 'INFO ::: App configuration is Public...'"
   }
   depends_on = [azurerm_app_configuration.appconf]
 }
