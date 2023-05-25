@@ -1,6 +1,5 @@
 data "azurerm_client_config" "current" {}
 
-
 locals {
   acs_domain_name = var.use_prefix ? join("", [lower(var.domain_prefix), lower(var.acs_domain_name), "-", lower(random_id.acs_unique_id.hex)]) : lower(var.acs_domain_name)
   inside_vpc      = length(var.vpc_options["subnet_ids"]) > 0 ? true : false
