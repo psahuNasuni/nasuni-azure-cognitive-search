@@ -160,28 +160,6 @@ resource "azurerm_role_assignment" "appconf_dataowner" {
 
 ############ INFO ::: Provisioning of Azure App Configuration :: Completed ###############
 
-resource "azurerm_app_configuration_key" "destination_container_name" {
-  configuration_store_id = azurerm_app_configuration.appconf.id
-  key                    = "destination-container-name"
-  label                  = "destination-container-name"
-  value                  = var.destination_container_name
-
-  depends_on = [
-    azurerm_role_assignment.appconf_dataowner
-  ]
-}
-
-resource "azurerm_app_configuration_key" "datasource_connection_string" {
-  configuration_store_id = azurerm_app_configuration.appconf.id
-  key                    = "datasource-connection-string"
-  label                  = "datasource-connection-string"
-  value                  = var.datasource_connection_string
-
-  depends_on = [
-    azurerm_app_configuration_key.destination_container_name
-  ]
-}
-
 resource "azurerm_app_configuration_key" "acs_resource_group" {
   configuration_store_id = azurerm_app_configuration.appconf.id
   key                    = "acs-resource-group"
@@ -189,7 +167,7 @@ resource "azurerm_app_configuration_key" "acs_resource_group" {
   value                  = azurerm_search_service.acs.resource_group_name
 
   depends_on = [
-    azurerm_app_configuration_key.datasource_connection_string
+    azurerm_role_assignment.appconf_dataowner
   ]
 }
 
