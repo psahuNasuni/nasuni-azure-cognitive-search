@@ -26,6 +26,12 @@ resource "azurerm_resource_group" "acs_rg" {
   count    = "N" == var.acs_rg_YN ? 1 : 0
   name     = "" == var.acs_rg_name ? "nasuni-labs-acs-rg" : var.acs_rg_name
   location = var.azure_location
+  tags = merge(
+    {
+      "Domain" = lower(local.acs_domain_name)
+    },
+    var.tags,
+  )
 }
 
 ############ INFO ::: Provisioning of Azure Cognitive Search :: Started ###############
@@ -60,6 +66,12 @@ resource "azurerm_private_endpoint" "acs_private_endpoint" {
   location            = data.azurerm_virtual_network.VnetToBeUsed[0].location
   resource_group_name = data.azurerm_virtual_network.VnetToBeUsed[0].resource_group_name
   subnet_id           = data.azurerm_subnet.azure_subnet_name[0].id
+  tags = merge(
+    {
+      "Domain" = lower(local.acs_domain_name)
+    },
+    var.tags,
+  )
 
   private_dns_zone_group {
     name                 = "default"
@@ -103,6 +115,12 @@ resource "azurerm_app_configuration" "appconf" {
   resource_group_name = "N" == var.acs_rg_YN ? azurerm_resource_group.acs_rg[0].name : var.acs_rg_name
   location            = "N" == var.acs_rg_YN ? azurerm_resource_group.acs_rg[0].location : var.azure_location
   sku                 = "standard"
+  tags = merge(
+    {
+      "Domain" = lower(local.acs_domain_name)
+    },
+    var.tags,
+  )
   # public_network_access = var.use_private_acs == "Y" ? "Disabled" : "Enabled"
 
   depends_on = [
@@ -124,6 +142,12 @@ resource "azurerm_private_endpoint" "appconf_private_endpoint" {
   location            = data.azurerm_virtual_network.VnetToBeUsed[0].location
   resource_group_name = data.azurerm_virtual_network.VnetToBeUsed[0].resource_group_name
   subnet_id           = data.azurerm_subnet.azure_subnet_name[0].id
+  tags = merge(
+    {
+      "Domain" = lower(local.acs_domain_name)
+    },
+    var.tags,
+  )
 
   private_dns_zone_group {
     name                 = "default"
@@ -165,6 +189,12 @@ resource "azurerm_app_configuration_key" "acs_resource_group" {
   key                    = "acs-resource-group"
   label                  = "acs-resource-group"
   value                  = azurerm_search_service.acs.resource_group_name
+  tags = merge(
+    {
+      "Domain" = lower(local.acs_domain_name)
+    },
+    var.tags,
+  )
 
   depends_on = [
     azurerm_role_assignment.appconf_dataowner
@@ -176,6 +206,12 @@ resource "azurerm_app_configuration_key" "acs_service_name" {
   key                    = "acs-service-name"
   label                  = "acs-service-name"
   value                  = azurerm_search_service.acs.name
+  tags = merge(
+    {
+      "Domain" = lower(local.acs_domain_name)
+    },
+    var.tags,
+  )
 
   depends_on = [
     azurerm_app_configuration_key.acs_resource_group
@@ -187,6 +223,12 @@ resource "azurerm_app_configuration_key" "acs_api_key" {
   key                    = "acs-api-key"
   label                  = "acs-api-key"
   value                  = azurerm_search_service.acs.primary_key
+  tags = merge(
+    {
+      "Domain" = lower(local.acs_domain_name)
+    },
+    var.tags,
+  )
 
   depends_on = [
     azurerm_app_configuration_key.acs_service_name
@@ -198,6 +240,12 @@ resource "azurerm_app_configuration_key" "nmc_api_acs_url" {
   key                    = "nmc-api-acs-url"
   label                  = "nmc-api-acs-url"
   value                  = "https://${azurerm_search_service.acs.name}.search.windows.net"
+  tags = merge(
+    {
+      "Domain" = lower(local.acs_domain_name)
+    },
+    var.tags,
+  )
 
   depends_on = [
     azurerm_app_configuration_key.acs_api_key
