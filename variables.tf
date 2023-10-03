@@ -41,7 +41,7 @@ variable "tags" {
     Application     = "Nasuni Analytics Connector with Azure Cognitive Search"
     Developer       = "Nasuni"
     PublicationType = "Nasuni Community Tool"
-    Version         = "V 0.1"
+    Version         = "V 0.2"
   }
 }
 
